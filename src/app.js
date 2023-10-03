@@ -25,7 +25,7 @@ window.onload = function() {
       "J",
       "Q",
       "K",
-      "A",
+      "A"
     ];
     const randomSuit = suits[Math.floor(Math.random() * suits.length)];
     const randomValue = values[Math.floor(Math.random() * values.length)];
@@ -73,6 +73,8 @@ window.onload = function() {
         updateBottomDiv(sortedSets);
       }
     }
+    // Una vez ordenado, muestra el conjunto final
+    updateBottomDiv(sortedSets);
   }
 
   // Función para comparar las cartas en función de sus valores numéricos
@@ -90,7 +92,7 @@ window.onload = function() {
       "J",
       "Q",
       "K",
-      "A",
+      "A"
     ];
     const valueIndex1 = values.indexOf(card1.value);
     const valueIndex2 = values.indexOf(card2.value);
@@ -106,7 +108,7 @@ window.onload = function() {
 
   // Función para dormir durante un tiempo dado
   function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   // Función para actualizar el contenido del "bottomDiv"
@@ -120,7 +122,7 @@ window.onload = function() {
       setDiv.className = "sorted-set";
       setDiv.textContent = `Set ${index + 1}:`;
 
-      set.forEach((card) => {
+      set.forEach(card => {
         const cardDiv = document.createElement("div");
         cardDiv.className = "card";
         cardDiv.style.color = card.color;
