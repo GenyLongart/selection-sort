@@ -25,7 +25,7 @@ window.onload = function() {
       "J",
       "Q",
       "K",
-      "A"
+      "A",
     ];
     const randomSuit = suits[Math.floor(Math.random() * suits.length)];
     const randomValue = values[Math.floor(Math.random() * values.length)];
@@ -53,20 +53,24 @@ window.onload = function() {
     return cardsArray;
   }
 
-  // Función para ordenar cartas utilizando Bubble Sort
-  async function bubbleSort(cardsArray) {
+  // Función para ordenar cartas utilizando Selection Sort
+  async function selectionSort(cardsArray) {
     const n = cardsArray.length;
     for (let i = 0; i < n - 1; i++) {
-      for (let j = 0; j < n - i - 1; j++) {
-        if (compareCards(cardsArray[j], cardsArray[j + 1]) > 0) {
-          const temp = cardsArray[j];
-          cardsArray[j] = cardsArray[j + 1];
-          cardsArray[j + 1] = temp;
-          await sleep(1000);
-          // Clonar cardsArray y agregarlo al arreglo sortedSets
-          sortedSets.push([...cardsArray]);
-          updateBottomDiv(sortedSets);
+      let minIndex = i;
+      for (let j = i + 1; j < n; j++) {
+        if (compareCards(cardsArray[j], cardsArray[minIndex]) < 0) {
+          minIndex = j;
         }
+      }
+      if (minIndex !== i) {
+        const temp = cardsArray[i];
+        cardsArray[i] = cardsArray[minIndex];
+        cardsArray[minIndex] = temp;
+        await sleep(1000);
+        // Clonar cardsArray y agregarlo al arreglo sortedSets
+        sortedSets.push([...cardsArray]);
+        updateBottomDiv(sortedSets);
       }
     }
   }
@@ -86,7 +90,7 @@ window.onload = function() {
       "J",
       "Q",
       "K",
-      "A"
+      "A",
     ];
     const valueIndex1 = values.indexOf(card1.value);
     const valueIndex2 = values.indexOf(card2.value);
@@ -102,7 +106,7 @@ window.onload = function() {
 
   // Función para dormir durante un tiempo dado
   function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   // Función para actualizar el contenido del "bottomDiv"
@@ -116,7 +120,7 @@ window.onload = function() {
       setDiv.className = "sorted-set";
       setDiv.textContent = `Set ${index + 1}:`;
 
-      set.forEach(card => {
+      set.forEach((card) => {
         const cardDiv = document.createElement("div");
         cardDiv.className = "card";
         cardDiv.style.color = card.color;
@@ -138,12 +142,12 @@ window.onload = function() {
       return;
     }
 
-    // Actualizar cardsArray con las cartas dibujadas
+    // Actualiza cardsArray con las cartas dibujadas
     cardsArray = drawRandomCards(amountOfCards);
   });
 
   // Event listener para el botón "Ordenar"
   document.getElementById("sort").addEventListener("click", () => {
-    bubbleSort([...cardsArray]); // Clonar cardsArray para evitar modificar el original
+    selectionSort([...cardsArray]); // Clonar cardsArray para evitar modificar el original
   });
 };
