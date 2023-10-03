@@ -6,52 +6,7 @@ import "./assets/img/rigo-baby.jpg";
 import "./assets/img/4geeks.ico";
 
 window.onload = function() {
-  function assignNumericValue(cardValue) {
-    switch (cardValue) {
-      case "2":
-        return 2;
-      case "3":
-        return 3;
-      case "4":
-        return 4;
-      case "5":
-        return 5;
-      case "6":
-        return 6;
-      case "7":
-        return 7;
-      case "8":
-        return 8;
-      case "9":
-        return 9;
-      case "10":
-        return 10;
-      case "J":
-        return 11;
-      case "Q":
-        return 12;
-      case "K":
-        return 13;
-      case "A":
-        return 14;
-      default:
-        return 0; // Valor predeterminado en caso de error
-    }
-  }
-
-  // Función para comparar las cartas en función de sus valores numéricos
-  function compareCards(card1, card2) {
-    const numericValue1 = assignNumericValue(card1.value);
-    const numericValue2 = assignNumericValue(card2.value);
-
-    if (numericValue1 < numericValue2) {
-      return -1;
-    } else if (numericValue1 > numericValue2) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
+  let cardsArray = [];
 
   // Función para generar una carta aleatoria
   function getRandomCard() {
@@ -79,81 +34,104 @@ window.onload = function() {
     return { suit: randomSuit, value: randomValue, color: cardColor };
   }
 
+  // Función para dibujar cartas aleatorias
+  function drawRandomCards(amount) {
+    const cardContainer = document.getElementById("cardContainer");
+    cardContainer.innerHTML = "";
+
+    const cardsArray = [];
+    for (let i = 0; i < amount; i++) {
+      const card = getRandomCard();
+      cardsArray.push(card);
+      const cardDiv = document.createElement("div");
+      cardDiv.className = "card";
+      cardDiv.style.color = card.color;
+      cardDiv.textContent = card.value + card.suit;
+      cardContainer.appendChild(cardDiv);
+    }
+    return cardsArray;
+  }
+
   // Función para ordenar cartas utilizando Bubble Sort
-  function bubbleSort(arr) {
-    const n = arr.length;
+  async function bubbleSort(cardsArray) {
+    const n = cardsArray.length;
     for (let i = 0; i < n - 1; i++) {
       for (let j = 0; j < n - i - 1; j++) {
-        if (compareCards(arr[j], arr[j + 1]) > 0) {
-          const temp = arr[j];
-          arr[j] = arr[j + 1];
-          arr[j + 1] = temp;
+        if (compareCards(cardsArray[j], cardsArray[j + 1]) > 0) {
+          const temp = cardsArray[j];
+          cardsArray[j] = cardsArray[j + 1];
+          cardsArray[j + 1] = temp;
+          await sleep(1000);
+          updateSortedCardContainer(cardsArray);
         }
       }
     }
   }
 
-  // Función para dibujar cartas aleatorias
-  function drawRandomCards() {
+  // Función para comparar las cartas en función de sus valores numéricos
+  function compareCards(card1, card2) {
+    const values = [
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "J",
+      "Q",
+      "K",
+      "A"
+    ];
+    const valueIndex1 = values.indexOf(card1.value);
+    const valueIndex2 = values.indexOf(card2.value);
+
+    if (valueIndex1 < valueIndex2) {
+      return -1;
+    } else if (valueIndex1 > valueIndex2) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  // Función para dormir durante un tiempo dado
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Función para actualizar el contenido del contenedor de cartas ordenadas en el DOM
+  function updateSortedCardContainer(cardsArray) {
+    const sortedCardContainer = document.getElementById("sortedCards");
+    sortedCardContainer.innerHTML = "";
+
+    for (const card of cardsArray) {
+      const cardDiv = document.createElement("div");
+      cardDiv.className = "card";
+      cardDiv.style.color = card.color;
+      cardDiv.textContent = card.value + card.suit;
+      sortedCardContainer.appendChild(cardDiv);
+    }
+  }
+
+  // Event listener para el botón "Dibujar"
+  document.getElementById("draw").addEventListener("click", () => {
     const amountOfCards = parseInt(
       document.getElementById("amountOfCards").value
     );
-    const cardContainer = document.getElementById("cardContainer");
-    cardContainer.innerHTML = "";
-
     if (isNaN(amountOfCards) || amountOfCards < 0 || amountOfCards > 10) {
       alert("Ingrese un número válido entre 0 y 10");
       return;
     }
 
-    const drawnCards = new Set();
+    // Actualizar cardsArray con las cartas dibujadas
+    cardsArray = drawRandomCards(amountOfCards);
+  });
 
-    while (drawnCards.size < amountOfCards) {
-      const card = getRandomCard();
-      const cardKey = card.value + card.suit;
-      if (!drawnCards.has(cardKey)) {
-        drawnCards.add(cardKey);
-      }
-    }
-
-    const cardsArray = Array.from(drawnCards);
-
-    for (const cardKey of cardsArray) {
-      const card = getRandomCard();
-      card.cardKey = cardKey;
-      const cardDiv = document.createElement("div");
-      cardDiv.className = "card";
-      cardDiv.style.color = card.color;
-      cardDiv.textContent = card.value + card.suit;
-      cardContainer.appendChild(cardDiv);
-    }
-  }
-
-  // Función para ordenar las cartas y mostrarlas
-  function sortCards() {
-    const cardContainer = document.getElementById("cardContainer");
-    const cards = Array.from(cardContainer.querySelectorAll(".card"));
-    const cardsToSort = cards.map(cardDiv => {
-      const cardValue = cardDiv.textContent.slice(0, -1);
-      const cardSuit = cardDiv.textContent.slice(-1);
-      const cardColor = cardDiv.style.color;
-      return { value: cardValue, suit: cardSuit, color: cardColor };
-    });
-
-    bubbleSort(cardsToSort);
-
-    cardContainer.innerHTML = ""; // Limpia el contenedor antes de mostrar las cartas ordenadas
-
-    for (const card of cardsToSort) {
-      const cardDiv = document.createElement("div");
-      cardDiv.className = "card";
-      cardDiv.style.color = card.color;
-      cardDiv.textContent = card.value + card.suit;
-      cardContainer.appendChild(cardDiv);
-    }
-  }
-
-  // Agrega eventos a los botones "Dibujar" y "Ordenar"
-  document.getElementById("draw").addEventListener("click", drawRandomCards);
-  document.getElementById("sort").addEventListener("click", sortCards);
+  // Event listener para el botón "Ordenar"
+  document.getElementById("sort").addEventListener("click", () => {
+    bubbleSort(cardsArray);
+  });
 };

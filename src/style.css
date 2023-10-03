@@ -6,3 +6,24 @@
   border: 1px solid #000;
   font-size: 18px;
 }
+#sortedCards {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.sorted-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 10px;
+}
+
+.sorted-cards .card {
+  width: 50px;
+  height: 80px;
+  font-size: 18px;
+  text-align: center;
+  line-height: 40px;
+  margin: 2px;
+}
