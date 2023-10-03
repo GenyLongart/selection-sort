@@ -7,6 +7,7 @@ import "./assets/img/4geeks.ico";
 
 window.onload = function() {
   let cardsArray = [];
+  let sortedSets = []; // Arreglo para almacenar los sets de cartas ordenadas
 
   // Función para generar una carta aleatoria
   function getRandomCard() {
@@ -62,7 +63,9 @@ window.onload = function() {
           cardsArray[j] = cardsArray[j + 1];
           cardsArray[j + 1] = temp;
           await sleep(1000);
-          updateSortedCardContainer(cardsArray);
+          // Clonar cardsArray y agregarlo al arreglo sortedSets
+          sortedSets.push([...cardsArray]);
+          updateBottomDiv(sortedSets);
         }
       }
     }
@@ -102,18 +105,27 @@ window.onload = function() {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Función para actualizar el contenido del contenedor de cartas ordenadas en el DOM
-  function updateSortedCardContainer(cardsArray) {
-    const sortedCardContainer = document.getElementById("sortedCards");
-    sortedCardContainer.innerHTML = "";
+  // Función para actualizar el contenido del "bottomDiv"
+  function updateBottomDiv(sortedSets) {
+    const bottomDiv = document.getElementById("bottomDiv");
+    bottomDiv.innerHTML = "";
 
-    for (const card of cardsArray) {
-      const cardDiv = document.createElement("div");
-      cardDiv.className = "card";
-      cardDiv.style.color = card.color;
-      cardDiv.textContent = card.value + card.suit;
-      sortedCardContainer.appendChild(cardDiv);
-    }
+    // Mostrar cada set de cartas ordenadas en el "bottomDiv"
+    sortedSets.forEach((set, index) => {
+      const setDiv = document.createElement("div");
+      setDiv.className = "sorted-set";
+      setDiv.textContent = `Set ${index + 1}:`;
+
+      set.forEach(card => {
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "card";
+        cardDiv.style.color = card.color;
+        cardDiv.textContent = card.value + card.suit;
+        setDiv.appendChild(cardDiv);
+      });
+
+      bottomDiv.appendChild(setDiv);
+    });
   }
 
   // Event listener para el botón "Dibujar"
@@ -132,6 +144,6 @@ window.onload = function() {
 
   // Event listener para el botón "Ordenar"
   document.getElementById("sort").addEventListener("click", () => {
-    bubbleSort(cardsArray);
+    bubbleSort([...cardsArray]); // Clonar cardsArray para evitar modificar el original
   });
 };
