@@ -1,1 +1,8 @@
 @import "~bootstrap/dist/css/bootstrap.min.css";
+.card {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid #000;
+  font-size: 18px;
+}
